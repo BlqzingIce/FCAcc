@@ -1,0 +1,29 @@
+﻿{
+  "$schema": "https://raw.githubusercontent.com/bsmg/BSIPA-MetadataFileSchema/master/Schema.json",
+  "id": "FCAcc",
+  "name": "FCAcc",
+  "author": "BlqzingIce",
+  "version": "1.1.0",
+  "description": "Beat Saber mod that adds a custom counter for no-miss accuracy",
+  "gameVersion": "1.29.1",
+  "dependsOn": {
+    "BSIPA": "^4.2.2",
+    "SiraUtil": "^3.1.2",
+    "Counters+": "^2.3.0"
+  },
+  "loadAfter": [
+    "ScoreSaber"
+  ],
+  "features": {
+    "CountersPlus.CustomCounter": {
+      "Name": "FC Acc",
+      "CounterLocation": "FCAcc.CustomCounter",
+      "MultiplayerReady": true,
+      "ConfigDefaults": {
+        "Enabled": true,
+        "Position": "BelowEnergy",
+        "Distance": 0
+      }
+    }
+  }
+}
