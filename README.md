@@ -1,0 +1,1 @@
+i am considering actually developing this into a full fledged mod, but for now it's like if you took the fc-percentage counter, removed all the settings, fixed a scoring bug, and added a display for your maximum final score based on your current score and fc acc
