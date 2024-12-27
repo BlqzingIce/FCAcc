@@ -1,20 +1,22 @@
-﻿using CountersPlus.Counters.Custom;
-using SiraUtil.Logging;
+﻿using SiraUtil.Logging;
 using System.Collections.Generic;
 using TMPro;
 using Zenject;
 
 namespace FCAcc
 {
-    public class CustomCounter : BasicCustomCounter
+    public class CustomCounter : CountersPlus.Counters.Custom.BasicCustomCounter
     {
-        [Inject] readonly ScoreController _scoreController;
-        [Inject] readonly BeatmapObjectManager _beatmapObjectManager;
-        [Inject] readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction;
-        [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor;
-        [Inject] readonly SiraLog _log;
+        [Inject] private readonly ScoreController _scoreController = null;
+        [Inject] private readonly BeatmapObjectManager _beatmapObjectManager = null;
+        [Inject] private readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction = null;
+        [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor = null;
+        [Inject] private readonly StandardLevelScenesTransitionSetupDataSO _standardLevelScenesTransitionSetupData = null;
+        //[Inject] private readonly SiraLog _log = null;
 
         private readonly Queue<ScoringElement> elementQueue = new Queue<ScoringElement>();
+        internal bool isInReplay = false;
+        
         private int goodCutCount = 0;
         private int curScoreLeft = 0;
         private int maxScoreLeft = 0;
@@ -59,9 +61,10 @@ namespace FCAcc
             counterTMP.lineSpacing = -45;
             counterTMP.text = accText + maxText;
 
-            if (ScoreSaberUtil.UpdateReplayStatus())
+            if (_standardLevelScenesTransitionSetupData.gameMode.Equals("Replay"))
             {
-                _scoreController.scoringForNoteFinishedEvent += ScoringFinishedSS;
+                isInReplay = true;
+                _scoreController.scoringForNoteFinishedEvent += ReplayScoringFinished;
             }
             else
             {
@@ -74,10 +77,10 @@ namespace FCAcc
 
         public override void CounterDestroy()
         {
-            if (ScoreSaberUtil.isInReplay)
+            if (isInReplay)
             {
-                ScoreSaberUtil.ResetReplayStatus();
-                _scoreController.scoringForNoteFinishedEvent -= ScoringFinishedSS;
+                isInReplay = false;
+                _scoreController.scoringForNoteFinishedEvent -= ReplayScoringFinished;
             }
             else
             {
@@ -95,12 +98,10 @@ namespace FCAcc
         {
             if (ShouldProcessNote(noteController.noteData))
             {
-                if (!info.allIsOK)
-                {
-                    notesLeft--;
-                    DecreaseMultiplier();
-                    UpdateMaxText();
-                }
+                if (info.allIsOK) return;
+                notesLeft--;
+                DecreaseMultiplier();
+                UpdateMaxText();
             }
             else if (noteController.noteData.gameplayType == NoteData.GameplayType.Bomb)
             {
@@ -111,12 +112,10 @@ namespace FCAcc
 
         private void HandleNoteWasMissed(NoteController noteController)
         {
-            if (ShouldProcessNote(noteController.noteData))
-            {
-                notesLeft--;
-                DecreaseMultiplier();
-                UpdateMaxText();
-            }
+            if (!ShouldProcessNote(noteController.noteData)) return;
+            notesLeft--;
+            DecreaseMultiplier();
+            UpdateMaxText();
         }
 
         private void HandlePlayerHeadDidEnterObstacles()
@@ -132,7 +131,7 @@ namespace FCAcc
             elementQueue.Enqueue(element);
         }
 
-        internal void FlushQueue()
+        private void FlushQueue()
         {
             while (elementQueue.Count > 0)
             {
@@ -140,7 +139,7 @@ namespace FCAcc
             }
         }
 
-        private void ScoringFinishedSS(ScoringElement scoringElement)
+        private void ReplayScoringFinished(ScoringElement scoringElement)
         {
             FlushQueue();
         }
@@ -167,14 +166,7 @@ namespace FCAcc
 
             notesLeft--;
             IncreaseMultiplier();
-            if (ScoreSaberUtil.isInReplay)
-            {
-                curScore += scoringElement.cutScore * multiplier;
-            }
-            else
-            {
-                curScore += scoringElement.cutScore * scoringElement.multiplier;
-            }
+            curScore += scoringElement.cutScore * (isInReplay ? multiplier : scoringElement.multiplier);
             UpdateMaxText();
         }
 
@@ -219,18 +211,14 @@ namespace FCAcc
 
         private void IncreaseMultiplier()
         {
-            if (multiplier < 8)
+            if (multiplier >= 8) return;
+            if (multiplierProgress < multiplier * 2)
             {
-                if (multiplierProgress < multiplier * 2)
-                {
-                    multiplierProgress++;
-                }
-                if (multiplierProgress >= multiplier * 2)
-                {
-                    multiplier *= 2;
-                    multiplierProgress = 0;
-                }
+                multiplierProgress++;
             }
+            if (multiplierProgress < multiplier * 2) return;
+            multiplier *= 2;
+            multiplierProgress = 0;
         }
 
         private void DecreaseMultiplier()
@@ -247,11 +235,9 @@ namespace FCAcc
 
 
 
-        private bool ShouldProcessNote(NoteData data)
+        private static bool ShouldProcessNote(NoteData data)
         {
-            if (data.gameplayType == NoteData.GameplayType.Normal) return true;
-            if (data.gameplayType == NoteData.GameplayType.BurstSliderHead) return true;
-            return false;
+            return data.gameplayType == NoteData.GameplayType.Normal || data.gameplayType == NoteData.GameplayType.BurstSliderHead;
         }
 
         private static int GetMaxMultiplier(int noteCount)

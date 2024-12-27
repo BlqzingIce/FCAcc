@@ -12,7 +12,7 @@ namespace FCAcc
         [AffinityPatch(typeof(GoodCutScoringElement), nameof(GoodCutScoringElement.Init))]
         private void Postfix(GoodCutScoringElement __instance)
         {
-            if (ScoreSaberUtil.isInReplay) _counter.QueueScoringElement(__instance);
+            if (_counter.isInReplay) _counter.QueueScoringElement(__instance);
         }
     }
 }
