@@ -24,7 +24,7 @@ namespace FCAcc
         public void OnApplicationStart()
         {
             ScoreSaberUtil.GetMethodBase();
-            _zenjector.Install<PatchInstaller>(Location.Player);
+            _zenjector.Install<PlayerInstaller>(Location.Player);
         }
 
         [OnExit]

@@ -11,7 +11,7 @@ namespace FCAcc
         [Inject] readonly ScoreController _scoreController;
         [Inject] readonly BeatmapObjectManager _beatmapObjectManager;
         [Inject] readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction;
-        [Inject] readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor;
+        [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor;
         [Inject] readonly SiraLog _log;
 
         private readonly Queue<ScoringElement> elementQueue = new Queue<ScoringElement>();
