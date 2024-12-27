@@ -4,7 +4,6 @@
         <ProjectGuid>{5243AB2C-E83F-41F7-8170-E87C818488B0}</ProjectGuid>
         <RootNamespace>FCAcc</RootNamespace>
         <AssemblyName>FCAcc</AssemblyName>
-        <TargetFramework>net472</TargetFramework>
         <DebugSymbols>true</DebugSymbols>
         <LocalRefsDir Condition="Exists('..\Refs')">..\Refs</LocalRefsDir>
         <BeatSaberDir>$(LocalRefsDir)</BeatSaberDir>
@@ -12,6 +11,7 @@
         <AssemblyTitle>FCAcc</AssemblyTitle>
         <Product>FCAcc</Product>
         <Copyright>Copyright © 2024 BlqzingIce</Copyright>
+        <TargetFramework>net48</TargetFramework>
     </PropertyGroup>
     <PropertyGroup Condition="$(DefineConstants.Contains('CIBuild')) OR '$(NCrunch)' == '1'">
         <DisableCopyToPlugins>True</DisableCopyToPlugins>

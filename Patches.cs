@@ -6,7 +6,7 @@ namespace FCAcc
 {
     internal class InitPatch : IAffinity
     {
-        [Inject] readonly CustomCounter _counter;
+        [Inject] readonly CustomCounter _counter = null;
 
         [AffinityPostfix]
         [AffinityPatch(typeof(GoodCutScoringElement), nameof(GoodCutScoringElement.Init))]
