@@ -6,11 +6,11 @@
         <AssemblyName>FCAcc</AssemblyName>
         <Authors>BlqzingIce</Authors>
         <Version>1.2.0</Version>
-        <GameVersion>1.40.0</GameVersion>
+        <GameVersion>1.39.1</GameVersion>
         <Description>Adds a custom counter for no-miss accuracy!</Description>
-        <ProjectHome></ProjectHome>
-        <ProjectSource></ProjectSource>
-        <Donate></Donate>
+        <!-- <ProjectHome></ProjectHome> -->
+        <!-- <ProjectSource></ProjectSource> -->
+        <!-- <Donate></Donate> -->
         <Features>{"CountersPlus.CustomCounter":{"Name":"FC Acc","CounterLocation":"FCAcc.CustomCounter","MultiplayerReady":true,"ConfigDefaults":{"Enabled":true,"Position":"BelowEnergy","Distance":0}}}</Features>
     </PropertyGroup>
     <ItemGroup>
