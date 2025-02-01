@@ -12,7 +12,7 @@ namespace FCAcc
         [Inject] private readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction = null;
         [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor = null;
         [Inject] private readonly StandardLevelScenesTransitionSetupDataSO _standardLevelScenesTransitionSetupData = null;
-        //[Inject] private readonly SiraLog _log = null;
+        [Inject] private readonly SiraLog _log = null;
 
         private readonly Queue<ScoringElement> elementQueue = new Queue<ScoringElement>();
         internal bool isInReplay = false;
@@ -48,26 +48,28 @@ namespace FCAcc
             accRight = 1;
             accCombined = 1;
             accText = "FC : 100.00%\n<color=#FF6B00>100.00% <color=#0061FF>100.00%";
-
+            
             multiplier = 1;
             multiplierProgress = 0;
             curScore = 0;
             notesLeft = _noteCountProcessor.NoteCount;
             maxScore = ComputeMaxMultipliedScore(notesLeft);
             maxText = "<color=#FFFFFF>\nMax : 100.00%";
-
+            
             counterTMP = CanvasUtility.CreateTextFromSettings(Settings);
             counterTMP.fontSize = 2.6f;
             counterTMP.lineSpacing = -45;
             counterTMP.text = accText + maxText;
-
-            if (_standardLevelScenesTransitionSetupData.gameMode.Equals("Replay"))
+            
+            if ("Replay".Equals(_standardLevelScenesTransitionSetupData.gameMode))
             {
+                _log.Info("ScoreSaber Replay!");
                 isInReplay = true;
                 _scoreController.scoringForNoteFinishedEvent += ReplayScoringFinished;
             }
             else
             {
+                _log.Info("Not ScoreSaber Replay!");
                 _scoreController.scoringForNoteFinishedEvent += ScoringFinished;
             }
             _beatmapObjectManager.noteWasCutEvent += HandleNoteWasCut;
