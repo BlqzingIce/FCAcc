@@ -24,6 +24,7 @@ namespace FCAcc
         public void OnApplicationStart()
         {
             _zenjector.Install<PlayerInstaller>(Location.Player);
+            _zenjector.Install<AppInstaller>(Location.App);
         }
 
         [OnExit]

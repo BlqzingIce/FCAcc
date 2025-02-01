@@ -11,11 +11,10 @@ namespace FCAcc
         [Inject] private readonly BeatmapObjectManager _beatmapObjectManager = null;
         [Inject] private readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction = null;
         [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor = null;
-        [Inject] private readonly StandardLevelScenesTransitionSetupDataSO _standardLevelScenesTransitionSetupData = null;
+        [Inject] private readonly StandardLevelScenesInit _standardLevelScenesInit = null;
         [Inject] private readonly SiraLog _log = null;
 
         private readonly Queue<ScoringElement> elementQueue = new Queue<ScoringElement>();
-        internal bool isInReplay = false;
         
         private int goodCutCount = 0;
         private int curScoreLeft = 0;
@@ -61,15 +60,12 @@ namespace FCAcc
             counterTMP.lineSpacing = -45;
             counterTMP.text = accText + maxText;
             
-            if ("Replay".Equals(_standardLevelScenesTransitionSetupData.gameMode))
+            if (_standardLevelScenesInit.isInReplay)
             {
-                _log.Info("ScoreSaber Replay!");
-                isInReplay = true;
                 _scoreController.scoringForNoteFinishedEvent += ReplayScoringFinished;
             }
             else
             {
-                _log.Info("Not ScoreSaber Replay!");
                 _scoreController.scoringForNoteFinishedEvent += ScoringFinished;
             }
             _beatmapObjectManager.noteWasCutEvent += HandleNoteWasCut;
@@ -79,9 +75,9 @@ namespace FCAcc
 
         public override void CounterDestroy()
         {
-            if (isInReplay)
+            if (_standardLevelScenesInit.isInReplay)
             {
-                isInReplay = false;
+                _standardLevelScenesInit.isInReplay = false;
                 _scoreController.scoringForNoteFinishedEvent -= ReplayScoringFinished;
             }
             else
@@ -168,7 +164,7 @@ namespace FCAcc
 
             notesLeft--;
             IncreaseMultiplier();
-            curScore += scoringElement.cutScore * (isInReplay ? multiplier : scoringElement.multiplier);
+            curScore += scoringElement.cutScore * (_standardLevelScenesInit.isInReplay ? multiplier : scoringElement.multiplier);
             UpdateMaxText();
         }
 
