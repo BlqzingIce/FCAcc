@@ -12,7 +12,7 @@ namespace FCAcc
         [Inject] private readonly PlayerHeadAndObstacleInteraction _playerHeadAndObstacleInteraction = null;
         [Inject] private readonly CountersPlus.Counters.NoteCountProcessors.NoteCountProcessor _noteCountProcessor = null;
         [Inject] private readonly StandardLevelScenesInit _standardLevelScenesInit = null;
-        [Inject] private readonly SiraLog _log = null;
+        //[Inject] private readonly SiraLog _log = null;
 
         private readonly Queue<ScoringElement> elementQueue = new Queue<ScoringElement>();
         
